@@ -13,6 +13,6 @@
     "start": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Sagar Pednekar",
   "license": "ISC"
 }

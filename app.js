@@ -20,7 +20,7 @@ fs.readFile('client_secret.json', (err, content) => {
   // uncomment this to create spreadsheet
   //authorize(JSON.parse(content), createNewSpreadsheet);
   // uncomment this to update spreadsheet
-  //authorize(JSON.parse(content), updateData);
+  authorize(JSON.parse(content), updateData);
   // uncomment this to copy spreadsheet
   //authorize(JSON.parse(content),  copySpreadsheet);
   authorize(JSON.parse(content), readData);
@@ -86,7 +86,7 @@ function createNewSpreadsheet(auth) {
   });
 }
 
-// to read the data from spreadsheet
+// to read the data from spreadsheet 
 function readData(auth) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
@@ -103,11 +103,15 @@ function readData(auth) {
       });
     } else {
       console.log('No data found.');
+     // HTTP Status Code 403: The server understood the request but refuses to authorize it.
+
     }
   });
 }
 
 // to insert the requested data
+// doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
+
 function insertData(auth) {
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.append({
@@ -133,10 +137,10 @@ function updateData(auth) {
   sheets.spreadsheets.values.update({
     auth: auth,
     spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'A1',
+    range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
-      "values": [[5, "Yohanth", 19]]
+      "values": [[6, "rakesh", 21],[10,"Kajal",23]]
     }
   }, (err, response) => {
     if (err) {
