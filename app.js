@@ -7,7 +7,9 @@ const app = express();
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
 const TOKEN_PATH = 'credentials.json';
 
-app.listen(3000);
+app.get("/",function (request,response) {
+    response.send("Hey this is Googlesheet App");
+}).listen(3000);
 
 // Load client secrets from a local file.
 fs.readFile('client_secret.json', (err, content) => {
@@ -96,7 +98,7 @@ function readData(auth) {
     if (rows.length) {
       // Print columns 
       rows.map((row) => {
-        console.log(`${row[0]}, ${row[1]}, ${row[2]}`);
+        console.log(`ID: ${row[0]},Name: ${row[1]},Age: ${row[2]}`);
 
       });
     } else {
@@ -111,14 +113,13 @@ function insertData(auth) {
   sheets.spreadsheets.values.append({
     auth: auth,
     spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'A1',
+    range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
       "values": [[5, "Jayesh", 22]]
     }
   }, (err, response) => {
     if (err) {
-      console.log(JSON.stringify(response));
       console.log('The API returned an error: ' + err);
       return;
     } else {
