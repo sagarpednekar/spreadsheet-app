@@ -20,27 +20,27 @@ fs.readFile('client_secret.json', (err, content) => {
   // uncomment this to create spreadsheet
   //authorize(JSON.parse(content), createNewSpreadsheet);
   // uncomment this to update spreadsheet
-  authorize(JSON.parse(content), updateData);
+  //authorize(JSON.parse(content), updateData);
   // uncomment this to copy spreadsheet
-  //authorize(JSON.parse(content),  copySpreadsheet);
+  //authorize(JSON.parse(content),copySpreadsheet);
+  //authorize(JSON.parse(content),ssclearData);
   authorize(JSON.parse(content), readData);
 });
 
 
 function authorize(credentials, callback) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id, client_secret, redirect_uris[0]);
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]); // get authclient 
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
     if (err) return getNewToken(oAuth2Client, callback);
     oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
+    callback(oAuth2Client); //passing auth to read,update,clear functions
   });
 }
 
-
+// generate credentials.json token 
 function getNewToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
@@ -74,7 +74,14 @@ function createNewSpreadsheet(auth) {
     resource: {
       properties: {
         title: "Accion reporting tool"
-      }
+      },
+      sheets: [
+        {
+          properties: {
+            title: 'Report1'
+          }
+        }
+      ]
     }
   }, (err, response) => {
     if (err) {
@@ -87,6 +94,7 @@ function createNewSpreadsheet(auth) {
 }
 
 // to read the data from spreadsheet 
+// doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
 function readData(auth) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
@@ -97,6 +105,7 @@ function readData(auth) {
     const rows = data.values;
     if (rows.length) {
       // Print columns 
+      console.log("Listing of Users:");
       rows.map((row) => {
         console.log(`ID: ${row[0]},Name: ${row[1]},Age: ${row[2]}`);
 
@@ -110,7 +119,7 @@ function readData(auth) {
 }
 
 // to insert the requested data
-// doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
+//POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}:append
 
 function insertData(auth) {
   var sheets = google.sheets('v4');
@@ -120,7 +129,7 @@ function insertData(auth) {
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
-      "values": [[5, "Jayesh", 22]]
+      "values": [[6, "Jayesh", 22]]
     }
   }, (err, response) => {
     if (err) {
@@ -131,7 +140,7 @@ function insertData(auth) {
     }
   });
 }
-// to update the spreadsheet with new data
+// to update the spreadsheet with new data PUT https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}
 function updateData(auth) {
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.update({
@@ -140,7 +149,7 @@ function updateData(auth) {
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
-      "values": [[6, "rakesh", 21],[10,"Kajal",23]]
+      "values": [[5, "Mit", 21],[10,"Kajal",23],[1,"Ajay",20],[2,"Bhaskar",28],[3,"karan",25],[7,"Anand",27]]
     }
   }, (err, response) => {
     if (err) {
@@ -179,6 +188,30 @@ function copySpreadsheet(auth) {
     }
   });
 }
+
+
+// function to clear rows and columns
+function clearData(auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
+  sheets.spreadsheets.values.clear({
+    // The ID of the spreadsheet containing the sheet to copy.
+    auth: auth,
+    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
+    range: 'A1:C3'
+    }, (err, response) => {
+    if (err) {
+      console.log('The API returned an error: ' + err);
+      return;
+    } else {
+      console.log("Data cleared");
+    }
+  });
+
+
+  
+}
+
+
 
 
 
