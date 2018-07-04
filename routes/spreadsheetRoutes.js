@@ -45,9 +45,13 @@ router.route('/getData').get((req, res) => {
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
+<<<<<<< HEAD
         readData(oAuth2Client, (err, result) => {
           res.send(result)
         })
+=======
+        readData(oAuth2Client);
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
       }
     })
     // code to generate new token ends here  
@@ -141,6 +145,10 @@ router.route('/add-data/spreadsheet').post((req, res) => {
     })
     // code to generate new token ends here  
   })
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
 })
 
 // routes for posting new data spreadsheet
@@ -305,22 +313,37 @@ function createNewSpreadsheet(auth) {
 
 // to read the data from spreadsheet 
 // doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
+<<<<<<< HEAD
 function readData(auth, done) { //done -> callback
+=======
+function readData(auth) {
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
     spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
     range: 'Sheet1',
   }, (err, { data }) => {
+<<<<<<< HEAD
     if (err) return done(err, null)
     const rows = JSON.stringify(data);
     return done(null, rows);
+=======
+    if (err) return console.log('The API returned an error: ' + err);
+    const rows = JSON.stringify(data);
+    console.log(rows);
+    return rows;
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
   });
 }
 
 // to insert the requested data
 //POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}:append
 
+<<<<<<< HEAD
 function insertData(auth, data) {
+=======
+function insertData(auth,data) {
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.append({
     auth: auth,
@@ -328,8 +351,12 @@ function insertData(auth, data) {
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
+<<<<<<< HEAD
       "values": [[6, "Jayesh", 22]]
     }
+=======
+      "values": [[6, "Jayesh", 22]]	}
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
   }, (err, response) => {
     if (err) {
       console.log('The API returned an error: ' + err);
