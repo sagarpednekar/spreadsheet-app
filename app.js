@@ -3,6 +3,8 @@ const readline = require('readline');
 const { google } = require('googleapis');
 const express = require("express");
 const app = express();
+const cors = require('cors');
+app.use(cors());
 const spreadsheetRoutes = require('./routes/spreadsheetRoutes');
 // If modifying these scopes, delete credentials.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
@@ -12,6 +14,8 @@ const PORT = 4000;
 
 // listen to port
 app.use('',spreadsheetRoutes);
+<<<<<<< HEAD
+=======
 
 var server = app.listen(PORT, function() {
   console.log(`AgileGantt is listening to  ${PORT}`);
@@ -31,4 +35,8 @@ fs.readFile('client_secret.json', (err, content) => {
   //authorize(JSON.parse(content),ssclearData);
   authorize(JSON.parse(content), readData);
 }); */
+>>>>>>> 5957f70d2df7b06f33a521443902d5208cc16bb8
 
+var server = app.listen(PORT, function() {
+  console.log(`AgileGantt is listening to  ${PORT}`);
+});

@@ -45,7 +45,9 @@ router.route('/getData').get((req, res) => {
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        readData(oAuth2Client);
+        readData(oAuth2Client, (err, result) => {
+          res.send(result)
+        })
       }
     })
     // code to generate new token ends here  
@@ -303,23 +305,22 @@ function createNewSpreadsheet(auth) {
 
 // to read the data from spreadsheet 
 // doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
-function readData(auth) {
+function readData(auth, done) { //done -> callback
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
     spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
     range: 'Sheet1',
   }, (err, { data }) => {
-    if (err) return console.log('The API returned an error: ' + err);
+    if (err) return done(err, null)
     const rows = JSON.stringify(data);
-    console.log(rows);
-    return rows;
+    return done(null, rows);
   });
 }
 
 // to insert the requested data
 //POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}:append
 
-function insertData(auth,data) {
+function insertData(auth, data) {
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.append({
     auth: auth,
@@ -327,7 +328,8 @@ function insertData(auth,data) {
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: {
-      "values": [[6, "Jayesh", 22]]	}
+      "values": [[6, "Jayesh", 22]]
+    }
   }, (err, response) => {
     if (err) {
       console.log('The API returned an error: ' + err);
