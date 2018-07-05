@@ -4,9 +4,9 @@ export default class Forminput extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id: '',
             name: '',
-            year: '',
-            rating: ''
+            age: ''
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,23 +22,23 @@ export default class Forminput extends Component {
     handleSubmit(event) {
         event.preventDefault();
         const val = {
+            id: this.state.id,
             name: this.state.name,
-            year: this.state.year,
-            rating: this.state.rating
+            age: this.state.age
         }
         console.log(val);
         axios({
-            method:'post',
-            url:'http://localhost:3003/movies',
-            data:val
+            method: 'post',
+            url: 'http://localhost:4000/add-data/spreadsheet',
+            data: val
         })
             .then(res => {
                 console.log(res);
                 console.log(res.data);
             })
-            .catch(res=>{
+            .catch(res => {
                 console.log(res);
-            } )
+            })
 
     }
 
@@ -46,18 +46,18 @@ export default class Forminput extends Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <label>
-                    Movie Name:
+                    ID:
+            </label>
+                <input type="text" name="id" onChange={this.handleChange} />
+                <label>
+                    Name:
             </label>
                 <input type="text" name="name" onChange={this.handleChange} />
-                <label>
-                    Year of Release:
-            </label>
-                <input type="text" name="year" onChange={this.handleChange} />
 
                 <label>
-                    Rating:
+                    Age:
             </label>
-                <input type="text" name="rating" onChange={this.handleChange} />
+                <input type="text" name="age" onChange={this.handleChange} />
                 <input type="submit" value="Submit" />
             </form>
         );

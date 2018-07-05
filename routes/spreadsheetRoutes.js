@@ -4,6 +4,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const app = express();
+const {readData,insertData, createNewSpreadsheet , clearData ,updateData,copySpreadsheet} = require('../controller/sheets');
 // If modifying these scopes, delete credentials.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
 const TOKEN_PATH = './credentials.json';
@@ -86,12 +87,16 @@ router.route('/new/spreadsheet').get((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            createNewSpreadsheet(oAuth2Client);
+            createNewSpreadsheet(oAuth2Client,(err,result)=>{
+                res.send(result);
+            });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        createNewSpreadsheet(oAuth2Client);
+        createNewSpreadsheet(oAuth2Client,(err,result)=>{
+          res.send(result);
+      });
       }
     })
     // code to generate new token ends here  
@@ -101,7 +106,7 @@ router.route('/new/spreadsheet').get((req, res) => {
 
 
 // routes for posting new data spreadsheet
-router.route('/add-data/spreadsheet').post((req, res) => {
+router.route('/add-data/spreadsheet').post((postmanReq, res) => {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     //authorize(JSON.parse(content),readData);
@@ -131,12 +136,16 @@ router.route('/add-data/spreadsheet').post((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            insertData(oAuth2Client, req.body);
+            insertData(oAuth2Client,postmanReq.body , (error, result)=>{
+              res.send(result.updates);
+            });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        insertData(oAuth2Client, req.body);
+        insertData(oAuth2Client, postmanReq.body , (error, result)=>{
+          res.send(result.updates);
+        });
       }
     })
     // code to generate new token ends here  
@@ -174,12 +183,16 @@ router.route('/update/spreadsheet').put((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            updateData(oAuth2Client);
+            updateData(oAuth2Client,(err,result)=>{
+              res.send(result);
+            });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        updateData(oAuth2Client);
+        updateData(oAuth2Client,(err,result)=>{
+          res.send(result);
+        });
       }
     })
     // code to generate new token ends here  
@@ -217,12 +230,16 @@ router.route('/copy/spreadsheet').post((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            copySpreadsheet(oAuth2Client);
+            copySpreadsheet(oAuth2Client,(err,result)=>{
+              res.send(result);
+            });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        copySpreadsheet(oAuth2Client);
+        copySpreadsheet(oAuth2Client,(err,result)=>{
+          res.send(result);
+        });
       }
     })
     // code to generate new token ends here  
@@ -260,159 +277,23 @@ router.route('/clear/spreadsheet').get((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            clearData(oAuth2Client);
+            clearData(oAuth2Client,(err,result)=>{
+              res.send(result);
+            });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        clearData(oAuth2Client);
-      }
+        clearData(oAuth2Client,(err,result)=>{
+          res.send(result);
+        });
+  }
     })
     // code to generate new token ends here  
   })
 
 })
 
-
-// methods for routes
-
-// add new sheet
-function createNewSpreadsheet(auth) {
-  var sheets = google.sheets('v4');
-  sheets.spreadsheets.create({
-    auth: auth,
-    resource: {
-      properties: {
-        title: "Accion reporting tool"
-      },
-      sheets: [
-        {
-          properties: {
-            title: 'Report1'
-          }
-        }
-      ]
-    }
-  }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-      console.log("New sheet created succesfully");
-    }
-  });
-}
-
-// to read the data from spreadsheet 
-// doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
-function readData(auth, done) { //done -> callback
-  const sheets = google.sheets({ version: 'v4', auth });
-  sheets.spreadsheets.values.get({
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'Sheet1',
-  }, (err, { data }) => {
-    if (err) return done(err, null)
-    const rows = JSON.stringify(data);
-    return done(null, rows);
-  });
-}
-
-// to insert the requested data
-//POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}:append
-
-function insertData(auth, data) {
-  var sheets = google.sheets('v4');
-  sheets.spreadsheets.values.append({
-    auth: auth,
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'Sheet1',
-    valueInputOption: "USER_ENTERED",
-    resource: {
-      "values": [[6, "Jayesh", 22]]
-    }
-  }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-      console.log("Data added succesfully");
-    }
-  });
-}
-// to update the spreadsheet with new data PUT https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}
-function updateData(auth) {
-  var sheets = google.sheets('v4');
-  sheets.spreadsheets.values.update({
-    auth: auth,
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'Sheet1',
-    valueInputOption: "USER_ENTERED",
-    resource: {
-      "values": [[5, "Mit", 21], [10, "Kajal", 23], [1, "Ajay", 20], [2, "Bhaskar", 28], [3, "karan", 25], [7, "Anand", 27]]
-    }
-  }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-
-      console.log("Data updated succesfully");
-    }
-  });
-}
-
-/*
-Copies a single sheet from a spreadsheet to another spreadsheet.
- Returns the properties of the newly created sheet.
-*/
-// to copy the data from 1 spreadsheet to other
-/*
-POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/sheets/{sheetId}:copyTo
-
-*/
-function copySpreadsheet(auth) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  sheets.spreadsheets.sheets.copyTo({
-    // The ID of the spreadsheet containing the sheet to copy.
-    auth: auth,
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',  // TODO: Update placeholder value.
-    // The ID of the sheet to copy.
-    sheetId: 0,  // TODO: Update placeholder value.
-    resource: {
-      // The ID of the spreadsheet to copy the sheet to.
-      destinationSpreadsheetId: '1PcsPJrAKP3hwCE0wkq_oof6Myk9dRZ96NuAGT4zZbko',  // TODO: Update placeholder value.
-    }
-  }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-      console.log("Data copied from source file to destination");
-    }
-  });
-}
-
-
-// function to clear rows and columns
-function clearData(auth) {
-  const sheets = google.sheets({ version: 'v4', auth });
-  sheets.spreadsheets.values.clear({
-    // The ID of the spreadsheet containing the sheet to copy.
-    auth: auth,
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
-    range: 'A1:C3'
-  }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-      console.log("Data cleared");
-    }
-  });
-
-
-
-}
 
 
 
