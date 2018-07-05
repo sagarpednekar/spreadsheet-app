@@ -18,29 +18,6 @@ export default class ReadSheet extends Component {
             })
     }
 
- 
-    // axios route for update
-    updateSpreadSheet = () =>{
-        axios.put()
-        .then(res=>{
-
-        })
-    }
-    // axios route to clear the spreadsheet
-    clearSpreadSheet = () =>{
-        axios.get()
-        .then(res=>{
-            
-        })
-    }
-    // axios route to 1 spreadsheet to other
-    copySpreadSheet = () =>{
-        axios.put()
-        .then(res=>{
-            
-        })
-    }
-
     render() {
         const { sheets } = this.state;
         return (
@@ -51,7 +28,7 @@ export default class ReadSheet extends Component {
                         <ul>
                             {sheets.map((sheet, i) =>
                                 <li key={i}>
-                                    User { i} : { sheet }<br></br>
+                                    User { i} : { sheet  }
                                 </li>
                             )}
                         </ul>

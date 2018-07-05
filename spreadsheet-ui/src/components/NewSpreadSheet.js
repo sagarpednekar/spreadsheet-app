@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
+import axios from 'axios';
 
 export default class NewSheet extends Component {
   componentWillMount() {
-    this.createNewSpreadsheet();
+    //this.createNewSpreadsheet();
     }
   createNewSpreadsheet=() =>{
     axios.get('/new/spreadsheet')

@@ -4,7 +4,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const app = express();
-const {readData,insertData, createNewSpreadsheet , clearData ,updateData,copySpreadsheet} = require('../controller/sheets');
+const { readData, insertData, createNewSpreadsheet, clearData, updateData, copySpreadsheet } = require('../controller/sheets');
 // If modifying these scopes, delete credentials.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
 const TOKEN_PATH = './credentials.json';
@@ -87,16 +87,16 @@ router.route('/new/spreadsheet').get((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            createNewSpreadsheet(oAuth2Client,(err,result)=>{
-                res.send(result);
+            createNewSpreadsheet(oAuth2Client, (err, result) => {
+              res.send(result);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        createNewSpreadsheet(oAuth2Client,(err,result)=>{
+        createNewSpreadsheet(oAuth2Client, (err, result) => {
           res.send(result);
-      });
+        });
       }
     })
     // code to generate new token ends here  
@@ -136,14 +136,14 @@ router.route('/add-data/spreadsheet').post((postmanReq, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            insertData(oAuth2Client,postmanReq.body , (error, result)=>{
+            insertData(oAuth2Client, postmanReq.body, (error, result) => {
               res.send(result.updates);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        insertData(oAuth2Client, postmanReq.body , (error, result)=>{
+        insertData(oAuth2Client, postmanReq.body, (error, result) => {
           res.send(result.updates);
         });
       }
@@ -183,14 +183,14 @@ router.route('/update/spreadsheet').put((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            updateData(oAuth2Client,(err,result)=>{
+            updateData(oAuth2Client, (err, result) => {
               res.send(result);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        updateData(oAuth2Client,(err,result)=>{
+        updateData(oAuth2Client, (err, result) => {
           res.send(result);
         });
       }
@@ -230,21 +230,20 @@ router.route('/copy/spreadsheet').post((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            copySpreadsheet(oAuth2Client,(err,result)=>{
+            copySpreadsheet(oAuth2Client,'1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs','18HZL6HpsYxvmKe6qm5pMlfm27VU-JhxEXn8TzTebfnY', (err, result) => {
               res.send(result);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        copySpreadsheet(oAuth2Client,(err,result)=>{
+        copySpreadsheet(oAuth2Client, (err, result) => {
           res.send(result);
         });
       }
     })
     // code to generate new token ends here  
   })
-
 })
 
 router.route('/clear/spreadsheet').get((req, res) => {
@@ -277,17 +276,17 @@ router.route('/clear/spreadsheet').get((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            clearData(oAuth2Client,(err,result)=>{
+            clearData(oAuth2Client, (err, result) => {
               res.send(result);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        clearData(oAuth2Client,(err,result)=>{
+        clearData(oAuth2Client, (err, result) => {
           res.send(result);
         });
-  }
+      }
     })
     // code to generate new token ends here  
   })

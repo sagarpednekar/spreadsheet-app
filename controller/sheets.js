@@ -98,7 +98,7 @@ Copies a single sheet from a spreadsheet to another spreadsheet.
 POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/sheets/{sheetId}:copyTo
 
 */
-function copySpreadsheet(auth,source,destination) {
+function copySpreadsheet(auth,source,destination,done) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.sheets.copyTo({
     // The ID of the spreadsheet containing the sheet to copy.
@@ -111,12 +111,8 @@ function copySpreadsheet(auth,source,destination) {
       destinationSpreadsheetId: destination,  // TODO: Update placeholder value.
     }
   }, (err, response) => {
-    if (err) {
-      console.log('The API returned an error: ' + err);
-      return;
-    } else {
-      console.log("Data copied from source file to destination");
-    }
+    if (err) console.log(done(err,null));
+    return done(null, response)
   });
 }
 
