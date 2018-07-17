@@ -4,7 +4,7 @@ const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');
 const app = express();
-const { readData, insertData, createNewSpreadsheet, clearData, updateData, copySpreadsheet } = require('../controller/sheets');
+const { readData, insertData, createNewSpreadsheet, clearData, updateSheetName, copySpreadsheet } = require('../controller/sheets');
 // If modifying these scopes, delete credentials.json.
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
 const TOKEN_PATH = './credentials.json';
@@ -153,7 +153,7 @@ router.route('/add-data/spreadsheet').post((postmanReq, res) => {
 })
 
 // routes for posting new data spreadsheet
-router.route('/update/spreadsheet').put((req, res) => {
+router.route('/update/spreadsheet').post((req, res) => {
   fs.readFile('client_secret.json', (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     //authorize(JSON.parse(content),readData);
@@ -183,14 +183,14 @@ router.route('/update/spreadsheet').put((req, res) => {
               if (err) console.error(err);
               console.log('Token stored to', TOKEN_PATH);
             });
-            updateData(oAuth2Client, (err, result) => {
+            updateSheetName(oAuth2Client, (err, result) => {
               res.send(result);
             });
           });
         });
       } else {
         oAuth2Client.setCredentials(JSON.parse(token));
-        updateData(oAuth2Client, (err, result) => {
+        updateSheetName(oAuth2Client, (err, result) => {
           res.send(result);
         });
       }

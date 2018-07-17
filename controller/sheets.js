@@ -31,23 +31,66 @@ function createNewSpreadsheet(auth) {
 
 // to read the data from spreadsheet 
 // doing get request to GET https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}
+function updateSheetName(auth,done){
+  const sheets = google.sheets({ version: 'v4', auth });
+  sheetid="1294138922"
+  sheets.spreadsheets.batchUpdate({
+    spreadsheetId: '1d6lCfRqU5A9Z0Gj0hWiTu7h-qYApnK6s1Qd7PkAq5q8',
+    resource:{
+      requests:[{
+        "updateSheetProperties":{
+            "properties":{
+              "sheetId":sheetid,
+              "title":"task1"
+              
+            },
+            "fields":"title"
+        }
+      }]
+    }
+  }), (err, res) => {
+  return done(res); 
+  }
+}
 function readData(auth, done) { //done -> callback
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.get({
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
+    spreadsheetId: '1d6lCfRqU5A9Z0Gj0hWiTu7h-qYApnK6s1Qd7PkAq5q8',
     majorDimension: 'ROWS',
-    range: 'Sheet1',
+    range: 'task1',
   }, (err, { data }) => {
     if (err) return done(err, null)
-    const rows = JSON.stringify(data.values);
-    return done(null, rows);
+    const rows = data.values;
+    const totalRows = data.values.length;
+    const firstCol = data.values[0];
+
+    console.log(totalRows);
+
+    var modified = [];
+    for (let i = 0; i < totalRows - 1; i++) {
+      let result = {};
+      for (let j = 0; j < firstCol.length; j++) {
+        if (!rows[i + 1][j]) {
+          result[firstCol[j]] = "";
+        }
+        else {
+          result[firstCol[j]] = rows[i + 1][j];
+        }
+
+      }
+      modified.push(result);
+    }
+    //console.log(result);
+    console.log(modified);
+
+    return done(null, modified);
   });
 }
 
 // to insert the requested data
 //POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}:append
 
-function insertData(auth, data ,done) {
+function insertData(auth, data, done) {
   console.log(data);
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.append({
@@ -56,15 +99,15 @@ function insertData(auth, data ,done) {
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
     resource: data
-  }, (err, {data}) => {
+  }, (err, { data }) => {
     if (err) {
-      console.log(done(err,null));
+      console.log(done(err, null));
       return;
     } else {
       console.log("Data added succesfully");
       console.log(data);
-      return done(null,data);
-      }
+      return done(null, data);
+    }
   });
 }
 // to update the spreadsheet with new data PUT https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/values/{range}
@@ -72,12 +115,9 @@ function updateData(auth) {
   var sheets = google.sheets('v4');
   sheets.spreadsheets.values.update({
     auth: auth,
-    spreadsheetId: '1dZ9W0UefQeidkENpCJGRgODwUe2ZVBzTAhg5PowmWQs',
+    spreadsheetId: '1d6lCfRqU5A9Z0Gj0hWiTu7h-qYApnK6s1Qd7PkAq5q8',
     range: 'Sheet1',
     valueInputOption: "USER_ENTERED",
-    resource: {
-      "values": [[5, "Mit", 21], [10, "Kajal", 23], [1, "Ajay", 20], [2, "Bhaskar", 28], [3, "karan", 25], [7, "Anand", 27]]
-    }
   }, (err, response) => {
     if (err) {
       console.log('The API returned an error: ' + err);
@@ -98,7 +138,7 @@ Copies a single sheet from a spreadsheet to another spreadsheet.
 POST https://sheets.googleapis.com/v4/spreadsheets/{spreadsheetId}/sheets/{sheetId}:copyTo
 
 */
-function copySpreadsheet(auth,source,destination,done) {
+function copySpreadsheet(auth, source, destination, done) {
   const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.sheets.copyTo({
     // The ID of the spreadsheet containing the sheet to copy.
@@ -111,7 +151,7 @@ function copySpreadsheet(auth,source,destination,done) {
       destinationSpreadsheetId: destination,  // TODO: Update placeholder value.
     }
   }, (err, response) => {
-    if (err) console.log(done(err,null));
+    if (err) console.log(done(err, null));
     return done(null, response)
   });
 }
@@ -138,8 +178,8 @@ function clearData(auth) {
 
 }
 module.exports.readData = readData;
+module.exports.updateSheetName = updateSheetName;
 module.exports.insertData = insertData;
 module.exports.createNewSpreadsheet = createNewSpreadsheet;
 module.exports.clearData = clearData
-module.exports.copySpreadsheet = copySpreadsheet
-module.exports.updateData = updateData
+module.exports.copySpreadsheet = copySpreadsheet;
