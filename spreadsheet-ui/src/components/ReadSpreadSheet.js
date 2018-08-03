@@ -11,7 +11,7 @@ export default class ReadSheet extends Component {
         }
 
     getData = () => {
-        axios.get('/getdata')
+        axios.get('/')
             .then(res => {
                 const sheets = res.data;
                 this.setState({ sheets });
@@ -26,11 +26,12 @@ export default class ReadSheet extends Component {
                     <h1>Users Listing</h1>
                     <div className="row">
                         <ul>
-                            {sheets.map((sheet, i) =>
+                            {sheets}
+                            {/* {sheets.map((sheet, i) =>
                                 <li key={i}>
                                     User { i} : { sheet  }
                                 </li>
-                            )}
+                            )} */}
                         </ul>
                     </div>
                 </div>
