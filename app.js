@@ -6,9 +6,7 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 const spreadsheetRoutes = require('./routes/spreadsheetRoutes');
-// If modifying these scopes, delete credentials.json.
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets']; //to make changes to spreadsheet
-const TOKEN_PATH = 'credentials.json';
+
 const PORT = 4000;
 
 
