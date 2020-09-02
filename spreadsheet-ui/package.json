@@ -8,7 +8,7 @@
     "auth0-js": "^9.7.3",
     "axios": "^0.18.0",
     "gapi-client": "0.0.3",
-    "googleapis": "^27.0.0",
+    "googleapis": "^39.1.0",
     "react": "^16.4.1",
     "react-cookie": "^2.2.0",
     "react-dom": "^16.4.1",
